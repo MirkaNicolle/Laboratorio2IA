@@ -1,0 +1,70 @@
+---
+title: "Rregresion Lineal"
+author: "Mirka Monzon, Daniela Villamar"
+date: "15/03/2022"
+output: 
+  html_document:
+    code_folding: hide
+    word_document: default
+    pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr) #Para usar select
+library(tidyverse)
+library(caret)
+library(ggplot2) #graficar
+```
+
+```{r}
+dataset <- read.csv("./Walmart.csv") 
+```
+
+Division de dataset 70% para entrenamiento y 30% para test
+```{r}
+split<- sample(c(rep(0, 0.7 * nrow(dataset)), rep(1, 0.3 * nrow(dataset))))
+table(split)
+
+train <- dataset[split == 0, ]
+#head(train)
+
+test <- dataset[split == 1, ]
+#head(test)
+```
+
+Variables independientes
+```{r}
+independientes <- select(dataset, Store, Date)
+summary(independientes)
+```
+
+Variables dependientes
+```{r}
+dependientes <- select(dataset, Weekly_Sales, Holiday_Flag, Temperature, Fuel_Price, Unemployment)
+summary(dependientes)
+```
+
+Construccion del modelo
+```{r}
+model <- lm(Store ~ poly(Unemployment, 3 , raw = TRUE), data = train)
+
+prediction <- model %>% predict(test) #prediccion
+```
+Para el grado del polino se eligio n, ya que se adheria de mejor manera a los datos seleccionados para la regresion 
+
+Rendimiento del modelo
+```{r}
+data.frame(RMSE = RMSE(prediction, test$Store), R2 = R2(prediction, test$Store))
+ 
+anova(model) #Partial f-test
+```
+
+Grafica regresion polinomial
+```{r}
+ggplot(train, aes(Store, Unemployment)) + geom_point() + stat_smooth(method = lm, formula = y ~ poly(x, 3, raw = TRUE))
+```
+
+
+
+
