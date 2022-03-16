@@ -41,19 +41,23 @@ summary(independientes)
 
 Variables dependientes
 ```{r}
-dependientes <- select(dataset, Weekly_Sales, Holiday_Flag, Temperature, Fuel_Price, Unemployment)
+dependientes <- select(dataset, Weekly_Sales, Holiday_Flag, Temperature, Fuel_Price, CPI, Unemployment)
 summary(dependientes)
 ```
 
 Construccion del modelo
 ```{r}
+dataset2 <- select(dataset, Store, Weekly_Sales, Temperature, Fuel_Price, CPI, Unemployment)
+plot(dataset2)
+
 model <- lm(Store ~ poly(Unemployment, 3 , raw = TRUE), data = train)
 
 prediction <- model %>% predict(test) #prediccion
 ```
-Para el grado del polino se eligio n, ya que se adheria de mejor manera a los datos seleccionados para la regresion 
 
-Rendimiento del modelo
+Para el grado del polino se eligio 3, ya que se adheria de mejor manera a los datos seleccionados en un rango medio para la regresion 
+
+Rendimiento del modelo y Partial f-test
 ```{r}
 data.frame(RMSE = RMSE(prediction, test$Store), R2 = R2(prediction, test$Store))
  
