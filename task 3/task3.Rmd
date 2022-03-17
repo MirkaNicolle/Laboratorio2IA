@@ -1,0 +1,57 @@
+---
+title: "Support Vector Machines"
+author: "Mirka Monzon, Daniela Villamar"
+date: "15/03/2022"
+output: 
+  html_document:
+    code_folding: hide
+    word_document: default
+    pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyverse)    # data manipulation and visualization
+library(kernlab)      # SVM methodology
+library(e1071)  
+library(ggplot2)      #graficar
+library(caret)
+```
+
+```{r}
+data <- file.choose() 
+dataset <- read.csv(data) #abre el csv
+summary(dataset)
+plot(dataset)
+```
+
+
+```{r}
+spec = c(train = .6, test = .2, validate = .2)
+
+g = sample(cut(seq(nrow(dataset)), nrow(dataset)*cumsum(c(0,spec)),labels = names(spec)))
+
+res = split(dataset, g) #division de la db
+
+#res$train
+#res$test
+#res$validate
+```
+
+Grafica de grupos
+```{r}
+#classifier = svm(formula = red ~ ., data = res$train, type = 'C-classification', kernel = 'linear')
+#plot(classifier, res$train)
+
+
+svmfit <- svm(red ~. , data = res$train, kernel = "linear", cost = 1, scale = FALSE)
+print(svmfit)
+plot(svmfit, res$train)
+
+```
+
+
+
+
+
